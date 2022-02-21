@@ -5,6 +5,7 @@ import com.alilestera.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -17,6 +18,15 @@ public class MapperTest {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Test
+    public void testPasswordEncoder() {
+        String encode = passwordEncoder.encode("18");
+        System.out.println("encode = " + encode);
+    }
 
     @Test
     public void testUserMapper() {
