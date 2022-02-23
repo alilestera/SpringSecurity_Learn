@@ -1,5 +1,7 @@
 package com.alilestera.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -70,6 +72,20 @@ public class RedisCache {
     public <T> T getCacheObject(final String key) {
         ValueOperations<String, T> operation = redisTemplate.opsForValue();
         return operation.get(key);
+    }
+
+    /**
+     * 获得缓存的基本对象，并转换成对应的对象。
+     *
+     * @param key 缓存键值
+     * @param clazz 转换的对象
+     * @return 缓存键值对应的数据
+     */
+    public <T> T getCacheObject(final String key, Class<T> clazz) {
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.get(key) == null ?
+                null :
+                ((JSONObject) (Objects.requireNonNull(operation.get(key)))).toJavaObject(clazz);
     }
 
     /**

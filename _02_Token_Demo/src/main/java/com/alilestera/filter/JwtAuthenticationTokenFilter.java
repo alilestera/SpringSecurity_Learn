@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author Alilestera
@@ -50,8 +51,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         //取出的是Json对象，必须使用toJavaObject方法转换成LoginUser对象
         //否则会报无法转换类型的异常
         String redisKey = "login:" + userId;
-        JSONObject jsonObject = redisCache.getCacheObject(redisKey);
-        LoginUser loginUser = jsonObject.toJavaObject(LoginUser.class);
+        LoginUser loginUser = redisCache.getCacheObject(redisKey, LoginUser.class);
+        if(Objects.isNull(loginUser)){
+            throw new RuntimeException("用户未登录");
+        }
+//        //如果jsonObject为null，说明用户已经登出，token失效
+//        if (Objects.isNull(jsonObject)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//        LoginUser loginUser = jsonObject.toJavaObject(LoginUser.class);
         //存入SecurityContextHolder
         //TODO 获取权限信息封装到Authentication中
         UsernamePasswordAuthenticationToken authenticationToken =
